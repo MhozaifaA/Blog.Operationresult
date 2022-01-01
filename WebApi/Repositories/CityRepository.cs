@@ -30,7 +30,7 @@ namespace WebApi.Repositories
         public async Task<OperationResult<object>> Get_2_Async()
         {
             await Task.Delay(2000);
-            return _Operation.SetException(new Exception("this is exception"));
+            return _Operation.SetException(new NullReferenceException("this is exception"));
         }
 
         public async Task<OperationResult<object>> Get_4_Async()
