@@ -73,6 +73,15 @@ namespace OperationResult
             return new OperationResult<T>() { OperationResultType = type_message.type, Message = type_message.message };
         }
 
+
+        public static implicit operator OperationResult<T>((string message, OperationResultTypes type) type_message)
+        {
+            if (type_message.type != OperationResultTypes.Failed && type_message.type != OperationResultTypes.Forbidden && type_message.type != OperationResultTypes.Unauthorized)
+                throw new ArgumentException($"{nameof(SetFailed)} in {nameof(OperationResult<T>)} take {type_message.type} should use with {OperationResultTypes.Failed}, {OperationResultTypes.Forbidden} or {OperationResultTypes.Unauthorized} .");
+
+            return new OperationResult<T>() { OperationResultType = type_message.type, Message = type_message.message };
+        }
+
         public static implicit operator OperationResult<T>(T result)
         {
             return new OperationResult<T>().SetSuccess(result);

@@ -5,7 +5,13 @@ namespace WebApi.Repositories
 {
     public interface ICityRepository
     {
+        OperationResult<List<City>> Get();
         OperationResult<City> GetById(int id);
+        Task<OperationResult<object>> Get_1_Async();
+        Task<OperationResult<object>> Get_2_Async();
+        Task<OperationResult<object>> Get_4_Async();
+        OperationResult<List<City>> Get_use_Implicit();
+        OperationResult<List<City>> Get_use__Operation();
     }
 
     public class CityRepository : ICityRepository
@@ -18,6 +24,62 @@ namespace WebApi.Repositories
             Name = $"City NO{index}"
             }).ToList();
         }
+
+
+
+        public async Task<OperationResult<object>> Get_2_Async()
+        {
+            await Task.Delay(2000);
+            return _Operation.SetException(new Exception("this is exception"));
+        }
+
+        public async Task<OperationResult<object>> Get_4_Async()
+        {
+            await Task.Delay(4000);
+            return new object();
+        }
+
+        public async Task<OperationResult<object>> Get_1_Async()
+        {
+            await Task.Delay(1000);
+            return OperationResultTypes.Exist;
+        }
+
+
+        public OperationResult<List<City>> Get()
+        {
+            OperationResult<List<City>> operation = new();
+            if (cities is null)
+                return operation.SetFailed("cities are null");
+
+            if (cities.Count == 0)
+                return operation.SetContent(OperationResultTypes.NotExist, "cities are empty");
+
+            return operation.SetSuccess(cities);
+        }
+
+        public OperationResult<List<City>> Get_use__Operation()
+        {
+            if (cities is null)
+                return _Operation.SetFailed<List<City>>("cities are null");
+
+            if(cities.Count==0)
+                return _Operation.SetContent<List<City>>(OperationResultTypes.NotExist, "cities are empty");
+
+            return _Operation.SetSuccess(cities);
+        }
+
+        public OperationResult<List<City>> Get_use_Implicit()
+        {
+            if (cities is null)
+                return ("cities are null", OperationResultTypes.Failed);
+
+            if (cities.Count == 0)
+                return (OperationResultTypes.NotExist, "cities are empty");
+
+            return cities;
+        }
+
 
         public OperationResult<City> GetById(int id)
         {
